@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<extension key="biz.jmaconsulting.volunteerreference" type="module">
+  <file>volunteerreference</file>
+  <name>Volunteer Reference Support</name>
+  <description>This extension enables volunteer to fill reference contact</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>JMA</author>
+    <email>support@jmaconsulting.biz</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">http://FIXME</url>
+    <url desc="Documentation">http://FIXME</url>
+    <url desc="Support">http://FIXME</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate>2019-09-04</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>5.0</ver>
+  </compatibility>
+  <comments>This is a new, undeveloped module</comments>
+  <civix>
+    <namespace>CRM/Volunteerreference</namespace>
+  </civix>
+</extension>
