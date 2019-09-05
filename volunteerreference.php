@@ -43,16 +43,16 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
 
       if (!empty($refName1) && !empty($refEmail1)) {
         $params = [
-          'ref_email' => $refEmail1
+          'ref_email' => $refEmail1,
           'ref_name' => $refName1,
           'volunteer_cid' => $contactID,
         ];
-        _sendMail($params, $sendTemplateParams)
+        _sendMail($params, $sendTemplateParams);
       }
 
       if (!empty($refName2) && !empty($refEmail2)) {
         $params = [
-          'ref_email' => $refEmail2
+          'ref_email' => $refEmail2,
           'ref_name' => $refName2,
           'volunteer_cid' => $contactID,
         ];
