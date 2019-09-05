@@ -14,17 +14,20 @@ function volunteerreference_civicrm_config(&$config) {
   _volunteerreference_civix_civicrm_config($config);
 }
 
+function volunteerreference_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  if ($formName == 'CRM_Volunteer_Form_VolunteerSignUp') {
+    foreach ([REF_EMAIL1, REF_EMAIL2] as $key) {
+      if (!empty($fields[$key]) && !CRM_Utils_Rule::email($fields[$key])) {
+        $errors[$key] = ts('Please enter a valid email.');
+      }
+    }
+  }
+}
+
 function volunteerreference_civicrm_postProcess($formName, &$form) {
   if ($formName == 'CRM_Volunteer_Form_VolunteerSignUp') {
     if ($contactID = $form->getVar('_primary_volunteer_id')) {
       $values = $form->controller->exportValues();
-      $values = civicrm_api3('Contact', 'get', [
-        'id' => $contactID,
-        'return.' . REF_EMAIL1 => 1,
-        'return.' . REF_NAME1 => 1,
-        'return.' . REF_EMAIL2 => 1,
-        'return.' . REF_NAME2 => 1,
-      ])['values'][$contactID];
 
       $refEmail1 = $values[REF_EMAIL1];
       $refName1 = $values[REF_NAME1];
