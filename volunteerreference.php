@@ -37,11 +37,18 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
       list($displayName, $email) = CRM_Contact_BAO_Contact_Location::getEmailDetails($contactID);
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
 
+      $params = [
+        'volunteer_cid' => $contactID,
+        'project_ids' => array_keys($form->getVar('_projects')),
+      ];
+      $tplParams = _prepareTplParams($params);
+
       $sendTemplateParams = array(
         'contactId' => $contactID,
         'from' => "$domainEmailName <" . $domainEmailAddress . ">",
         'messageTemplateID' => 70,
         'isTest' => FALSE,
+        'tplParams' => array("volunteer" => $tplParams),
       );
 
       if (!empty($refName1) && !empty($refEmail1)) {
@@ -61,25 +68,67 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
         ];
         _sendMail($params, $sendTemplateParams);
       }
+
+      _createWPUser($contactID);
     }
   }
 }
 
+function _createWPUser($contactID) {
+  $contact = civicrm_api3('Contact', 'getsingle', ['id' => $contactID]);
+  $ufID = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFMatch', $contactID, 'uf_id', 'contact_id');
+  $ufID = $ufID ?: CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFMatch', $contact['email'], 'uf_id', 'uf_name');
+  if (!$ufID) {
+    $cmsName = strtolower($contact['first_name'] . '.' . $contact['last_name'] . '.' . $contact['id']);
+    $params = [
+      'contactID' => $contact['id'],
+      'cms_pass' => 'changeme',
+      'cms_name' => $cmsName,
+      'email' => $contact['email'],
+    ];
+    $ufID = CRM_Core_BAO_CMSUser::create($params, 'email');
+  }
+  $u = new WP_User($ufID);
+  $u->set_role('volunteer');
+}
+
 function _sendMail($params, $sendTemplateParams) {
-  $tplParams = _prepareTplParams($params);
   $sendTemplateParams = array_merge(
     $sendTemplateParams,
     array(
       'toName' => $params['ref_name'],
       'toEmail' => $params['ref_email'],
-      'tplParams' => array("volunteer_projects" => $tplParams),
     )
   );
   CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
 }
 
 function _prepareTplParams($params) {
-  return $params;
+  $project = $tplParams = [];
+  foreach ($params['project_ids'] as $projectId) {
+    $result = civicrm_api3('VolunteerProject', 'get', array(
+      'return' => "title,description",
+      'sequential' => 1,
+      'api.VolunteerProjectContact.get' => array(
+        'sequential' => 1,
+        'contact_id' => $params['volunteer_cid'],
+        'return' => "contact_id,relationship_type_label",
+      ),
+      'id' => $projectId
+    ));
+
+    $contact = civicrm_api3('Contact', 'getsingle', ['id' => $params['volunteer_cid']]);
+
+    if ($result['count'] > 0) {
+      $project['project'] = $result['values'][0]['title'];
+      $project['display_name'] = $contact['display_name'];
+      $project['role'] = $result['values'][0]['api.VolunteerProjectContact.get']['values'][0]['relationship_type_label'];
+      $project['opportunity'] = 1;
+    }
+    $tplParams[] = $project;
+  }
+
+  return $tplParams;
 }
 
 /**
