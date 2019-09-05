@@ -17,44 +17,66 @@ function volunteerreference_civicrm_config(&$config) {
 function volunteerreference_civicrm_postProcess($formName, &$form) {
   if ($formName == 'CRM_Volunteer_Form_VolunteerSignUp') {
     if ($contactID = $form->getVar('_primary_volunteer_id')) {
+      $values = $form->controller->exportValues();
       $values = civicrm_api3('Contact', 'get', [
         'id' => $contactID,
-        'return.' . REF_EMAIL => 1,
-        'return.' . REF_NAME => 1,
+        'return.' . REF_EMAIL1 => 1,
+        'return.' . REF_NAME1 => 1,
+        'return.' . REF_EMAIL2 => 1,
+        'return.' . REF_NAME2 => 1,
       ])['values'][$contactID];
 
-      $refEmail = $values[REF_EMAIL];
-      $refName = $values[REF_NAME];
+      $refEmail1 = $values[REF_EMAIL1];
+      $refName1 = $values[REF_NAME1];
+      $refEmail2 = $values[REF_EMAIL2];
+      $refName2 = $values[REF_NAME2];
 
       list($displayName, $email) = CRM_Contact_BAO_Contact_Location::getEmailDetails($contactID);
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
 
-      if ($refEmail) {
+      $sendTemplateParams = array(
+        'contactId' => $contactID,
+        'from' => "$domainEmailName <" . $domainEmailAddress . ">",
+        'messageTemplateID' => 70,
+        'isTest' => FALSE,
+      );
+
+      if (!empty($refName1) && !empty($refEmail1)) {
         $params = [
-          'ref_email' => $refEmail
-          'ref_name' => $refName,
+          'ref_email' => $refEmail1
+          'ref_name' => $refName1,
           'volunteer_cid' => $contactID,
         ];
-        $tplParams = _prepareTplParams($params);
-        $sendTemplateParams = array(
-          'contactId' => $contactID,
-          'from' => "$domainEmailName <" . $domainEmailAddress . ">",
-          'groupName' => 'msg_tpl_workflow_volunteer',
-          'isTest' => FALSE,
-          'toName' => $refName,
-          'toEmail' => $refEmail,
-          'tplParams' => array("volunteer_projects" => $tplParams),
-          'valueName' => 'volunteer_reference_notification',
-        );
+        _sendMail($params, $sendTemplateParams)
+      }
 
-        CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
+      if (!empty($refName2) && !empty($refEmail2)) {
+        $params = [
+          'ref_email' => $refEmail2
+          'ref_name' => $refName2,
+          'volunteer_cid' => $contactID,
+        ];
+        _sendMail($params, $sendTemplateParams);
       }
     }
   }
 }
 
-function _prepareTplParams($params) {
+function _sendMail($params, $sendTemplateParams) {
+  $tplParams = _prepareTplParams($params);
+  $sendTemplateParams = array_merge(
+    $sendTemplateParams,
+    array(
+      'toName' => $params['ref_name'],
+      'toEmail' => $params['ref_email'],
+      'tplParams' => array("volunteer_projects" => $tplParams),
+    )
+  );
+  CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
+}
 
+function _prepareTplParams($params) {
+  return $params;
 }
 
 /**
