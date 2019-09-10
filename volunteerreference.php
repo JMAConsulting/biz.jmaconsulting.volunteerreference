@@ -3,7 +3,7 @@
 require_once 'volunteerreference.civix.php';
 require_once 'volunteerreference.constant.php';
 
-use CRM_Volunteerreference_ExtensionUtil as E;
+use CRM_Volunteerreference_Util as E;
 
 /**
  * Implements hook_civicrm_config().
@@ -69,42 +69,14 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
         _sendMail($params, $sendTemplateParams);
       }
 
-      _createWPUser($contactID);
+      E::createWPUser($contactID);
     }
   }
 }
 
-function _createWPUser($contactID) {
-  $contact = civicrm_api3('Contact', 'getsingle', ['id' => $contactID]);
-  $ufID = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFMatch', $contactID, 'uf_id', 'contact_id');
-  $ufID = $ufID ?: CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFMatch', $contact['email'], 'uf_id', 'uf_name');
-  if (!$ufID) {
-    $cmsName = strtolower($contact['first_name'] . '.' . $contact['last_name'] . '.' . $contact['id']);
-    $params = [
-      'contactID' => $contact['id'],
-      'cms_pass' => 'changeme',
-      'cms_name' => $cmsName,
-      'email' => $contact['email'],
-    ];
-    $ufID = CRM_Core_BAO_CMSUser::create($params, 'email');
-  }
-  $u = new WP_User($ufID);
-  $u->set_role('volunteer');
-}
-
-function _sendMail($params, $sendTemplateParams) {
-  $sendTemplateParams = array_merge(
-    $sendTemplateParams,
-    array(
-      'toName' => $params['ref_name'],
-      'toEmail' => $params['ref_email'],
-    )
-  );
-  CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
-}
 
 function _prepareTplParams($params) {
-  $project = $tplParams = [];
+  $tplParams = [];
   foreach ($params['project_ids'] as $projectId) {
     $result = civicrm_api3('VolunteerProject', 'get', array(
       'return' => "title,description",
@@ -120,12 +92,11 @@ function _prepareTplParams($params) {
     $contact = civicrm_api3('Contact', 'getsingle', ['id' => $params['volunteer_cid']]);
 
     if ($result['count'] > 0) {
-      $project['project'] = $result['values'][0]['title'];
-      $project['display_name'] = $contact['display_name'];
-      $project['role'] = $result['values'][0]['api.VolunteerProjectContact.get']['values'][0]['relationship_type_label'];
-      $project['opportunity'] = 1;
+      $tplParams['project'] = $result['values'][0]['title'];
+      $tplParams['display_name'] = $contact['display_name'];
+      $tplParams['role'] = $result['values'][0]['api.VolunteerProjectContact.get']['values'][0]['relationship_type_label'];
+      $tplParams['opportunity'] = 1;
     }
-    $tplParams[] = $project;
   }
 
   return $tplParams;
