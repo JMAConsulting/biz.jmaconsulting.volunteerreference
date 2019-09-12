@@ -1,6 +1,6 @@
 <?php
 
-class CRM_Volunteerreference_Util {
+class CRM_Volunteerreference_Utils {
 
   public static function createWPUser($contactID) {
     $contact = civicrm_api3('Contact', 'getsingle', ['id' => $contactID]);
