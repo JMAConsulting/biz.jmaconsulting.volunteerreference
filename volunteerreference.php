@@ -74,6 +74,17 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
   }
 }
 
+function _sendMail($params, $sendTemplateParams) {
+  $sendTemplateParams = array_merge(
+    $sendTemplateParams,
+    array(
+      'toName' => $params['ref_name'],
+      'toEmail' => $params['ref_email'],
+    )
+  );
+  CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
+}
+
 
 function _prepareTplParams($params) {
   $tplParams = [];
