@@ -3,7 +3,7 @@
 require_once 'volunteerreference.civix.php';
 require_once 'volunteerreference.constant.php';
 
-use CRM_Volunteerreference_Util as E;
+use CRM_Volunteerreference_Utils as E;
 
 /**
  * Implements hook_civicrm_config().
