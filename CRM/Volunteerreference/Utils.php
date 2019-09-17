@@ -24,7 +24,7 @@ class CRM_Volunteerreference_Utils {
     $u->set_role('volunteer');
   }
 
-  function _sendMail($params, $sendTemplateParams) {
+  public static function sendMail($params, $sendTemplateParams) {
     $sendTemplateParams = array_merge(
       $sendTemplateParams,
       array(

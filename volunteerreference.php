@@ -57,7 +57,9 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
           'ref_name' => $refName1,
           'volunteer_cid' => $contactID,
         ];
-        _sendMail($params, $sendTemplateParams);
+        $sendTemplateParams['tplParams']['volunteer']['url'] = CRM_Utils_System::url('civicrm/reference/request', sprintf("vid=%d&customid=%s", $params['volunteer_cid'], str_replace('custom_', '', REF_NAME1)));
+
+        E::sendMail($params, $sendTemplateParams);
       }
 
       if (!empty($refName2) && !empty($refEmail2)) {
@@ -66,23 +68,14 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
           'ref_name' => $refName2,
           'volunteer_cid' => $contactID,
         ];
-        _sendMail($params, $sendTemplateParams);
+        $sendTemplateParams['tplParams']['volunteer']['url'] = CRM_Utils_System::url('civicrm/reference/request', sprintf("vid=%d&customid=%s", $params['volunteer_cid'], str_replace('custom_', '', REF_NAME2)));
+        E::sendMail($params, $sendTemplateParams);
       }
 
       E::createWPUser($contactID);
+      CRM_Utils_System::redirect('https://girlsinscience.ca/thankyou-volunteer');
     }
   }
-}
-
-function _sendMail($params, $sendTemplateParams) {
-  $sendTemplateParams = array_merge(
-    $sendTemplateParams,
-    array(
-      'toName' => $params['ref_name'],
-      'toEmail' => $params['ref_email'],
-    )
-  );
-  CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
 }
 
 
@@ -95,7 +88,7 @@ function _prepareTplParams($params) {
       'api.VolunteerProjectContact.get' => array(
         'sequential' => 1,
         'contact_id' => $params['volunteer_cid'],
-        'return' => "contact_id,relationship_type_label",
+        'return' => ["contact_id","relationship_type_id"],
       ),
       'id' => $projectId
     ));
@@ -106,7 +99,6 @@ function _prepareTplParams($params) {
       $tplParams['project'] = $result['values'][0]['title'];
       $tplParams['display_name'] = $contact['display_name'];
       $tplParams['role'] = $result['values'][0]['api.VolunteerProjectContact.get']['values'][0]['relationship_type_label'];
-      $tplParams['opportunity'] = 1;
     }
   }
 
