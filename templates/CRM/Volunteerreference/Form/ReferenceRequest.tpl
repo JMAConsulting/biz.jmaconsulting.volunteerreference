@@ -1,14 +1,8 @@
 {* HEADER *}
 
 <div class="crm-section">
-  <div class="label">To:</div>
+  <div class="label">REFERENCE CHECK FOR:</div>
   <div class="content">{$volunteer}</div>
-  <div class="clear"></div>
-</div>
-
-<div class="crm-section">
-  <div class="label">From:</div>
-  <div class="content">{$referencename}</div>
   <div class="clear"></div>
 </div>
 

@@ -4,6 +4,7 @@
     <path>civicrm/reference/request</path>
     <page_callback>CRM_Volunteerreference_Form_ReferenceRequest</page_callback>
     <title>ReferenceRequest</title>
-    <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>profile create</access_arguments>
+    <is_public>true</is_public>
   </item>
 </menu>

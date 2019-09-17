@@ -73,6 +73,8 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
       }
 
       E::createWPUser($contactID);
+      civicrm_api3('Contact', 'create', ['id' => $contactID, 'custom_71' => 1]);
+
       CRM_Utils_System::redirect('https://girlsinscience.ca/thankyou-volunteer');
     }
   }

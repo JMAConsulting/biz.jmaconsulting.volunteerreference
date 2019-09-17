@@ -55,12 +55,18 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
     $values['skip_greeting_processing'] = TRUE;
     $contactID = CRM_Contact_BAO_Contact::createProfileContact($values, $fields, $this->_contactID, NULL, REFERENCE_PROFILE);
     civicrm_api3('Activity', 'create', [
-      'source_contact_id' => $this->_contactID,
+      'source_contact_id' => CRM_Core_Session::getLoggedInContactID() ?: $this->_contactID,
       'target_contact_id' => $this->_contactID,
       'subject' => 'Refernce form submitted by ' . $this->_referenceName,
-      'activity_type_id' => 56,
+      'activity_type_id' => 57,
       'status_id' => 'Completed',
     ]);
+
+    $count = civicrm_api3('Activity', 'getcount', ['target_contact_id' => $this->_contactID, 'activity_type_id' => 57]);
+    if ($count == 2) {
+      civicrm_api3('Contact', 'create', ['id' => $this->_contactID, 'custom_71' => 2]);
+    }
+    CRM_Utils_System::redirect('https://girlsinscience.ca/?p=1228&preview=true');
   }
 
   public function buildCustom($id, $name, $viewOnly = FALSE, $ignoreContact = FALSE) {
