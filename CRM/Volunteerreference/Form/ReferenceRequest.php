@@ -19,7 +19,7 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
     if ($this->_contactID) {
       $contact = civicrm_api3('Contact', 'getsingle', [
         'id' => $this->_contactID,
-        return => ['custom_' . $customID, 'display_name'],
+        'return' => ['custom_' . $customID, 'display_name'],
       ]);
       $this->assign('volunteer', $contact['volunteer']);
       $this->assign('reference', $contact['custom_' . $customID]);
