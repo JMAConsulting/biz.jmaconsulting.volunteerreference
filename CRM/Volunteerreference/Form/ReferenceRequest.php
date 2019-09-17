@@ -65,22 +65,16 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
     $count = civicrm_api3('Activity', 'getcount', ['target_contact_id' => $this->_contactID, 'activity_type_id' => 57]);
     if ($count == 2) {
       civicrm_api3('Contact', 'create', ['id' => $this->_contactID, 'custom_71' => 2]);
-      $activity = civicrm_api3('Activity', 'get', [
+      civicrm_api3('Activity', 'get', [
         'activity_type_id' => 55,
-        'target_contact_id' => $this->_contactID,
+        'assignee_contact_id' => $this->_contactID,
         'sequential' => 1,
         'api.Activity.create' => [
           'id' => "\$value.id",
           'activity_status_id' => 'Completed',
-        ]
-      ])['values'];
-      if (!empty($activity[0]['id'])) {
-        civicrm_api3('Activity', 'create', [
-          'id' => $activity[0]['id'],
-          'activity_status_id' => 'Completed',
           'activity_date_time' => date('YmdHis'),
-        ]);
-      }
+        ]
+      ]);
     }
     CRM_Utils_System::redirect('https://girlsinscience.ca/?p=1228&preview=true');
   }
