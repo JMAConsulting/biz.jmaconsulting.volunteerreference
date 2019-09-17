@@ -1,7 +1,7 @@
 {* HEADER *}
 
 <div class="crm-section">
-  <div class="label">REFERENCE CHECK FOR:</div>
+  <div>REFERENCE CHECK FOR:</div>
   <div class="content">{$volunteer}</div>
   <div class="clear"></div>
 </div>
