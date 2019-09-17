@@ -22,7 +22,7 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
         'id' => $this->_contactID,
         'return' => ['custom_' . $customID, 'display_name'],
       ]);
-      $this->assign('volunteer', $contact['volunteer']);
+      $this->assign('volunteer', $contact['display_name']);
       $this->assign('reference', $contact['custom_' . $customID]);
       $this->_referenceName = $contact['custom_' . $customID];
     }
