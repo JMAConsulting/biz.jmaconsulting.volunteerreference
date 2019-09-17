@@ -34,4 +34,5 @@ Thank you for your assistance.{/ts}
 CRM.$(function($) {
  $('legend').hide();
 });
+</script>
 {/literal}
