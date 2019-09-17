@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/reference/request</path>
+    <page_callback>CRM_Volunteerreference_Form_ReferenceRequest</page_callback>
+    <title>ReferenceRequest</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
