@@ -14,6 +14,7 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
   public $_referenceName = NULL;
 
   public function buildQuickForm() {
+    CRM_Utils_System::setTitle(ts('Reference Request Form'));
     $this->_contactID = CRM_Utils_Request::retrieve('vid', 'Positive', $this, FALSE);
     $customID = CRM_Utils_Request::retrieve('customid', 'Positive', $this, FALSE);
     if ($this->_contactID) {

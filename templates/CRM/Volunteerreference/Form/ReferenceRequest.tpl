@@ -2,8 +2,14 @@
 
 <div class="crm-section">
   <div class="label">To:</div>
+  <div class="content">{$volunteer}</div>
+  <div class="clear"></div>
+</div>
+
+<div class="crm-section">
+  <div class="label">From:</div>
   <div class="content">{$reference}</div>
-  <div class="clear">{$volunteer}</div>
+  <div class="clear"></div>
 </div>
 
 <div class="content description-text">
