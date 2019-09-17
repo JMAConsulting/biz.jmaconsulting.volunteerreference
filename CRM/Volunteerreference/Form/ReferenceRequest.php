@@ -23,10 +23,22 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
         'return' => ['custom_' . $customID, 'display_name'],
       ]);
       $this->assign('volunteer', $contact['display_name']);
-      $this->assign('reference', $contact['custom_' . $customID]);
+      $this->assign('referencename', $contact['custom_' . $customID]);
       $this->_referenceName = $contact['custom_' . $customID];
     }
     $this->buildCustom(REFERENCE_PROFILE, 'reference');
+
+    $buttons[] = array(
+      'type' => 'submit',
+      'name' => E::ts('Submit'),
+      'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+    );
+    $buttons[] = array(
+      'type' => 'cancel',
+      'name' => E::ts('Cancel'),
+    );
+    $this->addButtons($buttons);
+
 
     $this->addFormRule(array('CRM_Volunteerreference_Form_ReferenceRequest', 'formRule'), $this);
     parent::buildQuickForm();

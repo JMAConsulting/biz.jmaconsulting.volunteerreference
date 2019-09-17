@@ -8,7 +8,7 @@
 
 <div class="crm-section">
   <div class="label">From:</div>
-  <div class="content">{$reference}</div>
+  <div class="content">{$referencename}</div>
   <div class="clear"></div>
 </div>
 
@@ -28,3 +28,10 @@ Thank you for your assistance.{/ts}
 <div class="crm-submit-buttons">
 {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
+
+{literal}
+<script type="text/javascript">
+CRM.$(function($) {
+ $('legend').hide();
+});
+{/literal}
