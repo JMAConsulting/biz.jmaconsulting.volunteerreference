@@ -24,6 +24,17 @@ function volunteerreference_civicrm_validateForm($formName, &$fields, &$files, &
   }
 }
 
+function volunteerreference_civicrm_preProcess($formName, &$form) {
+  if ($formName == 'CRM_Volunteer_Form_VolunteerSignUp') {
+    $needs = $form->getVar('_needs');
+    foreach ($needs as $need) {
+      if ($need['role_id'] == 7) {
+        $form->setVar('_primary_volunteer_profile_ids', [28]);
+      }
+    }
+  }
+}
+
 function volunteerreference_civicrm_postProcess($formName, &$form) {
   if ($formName == 'CRM_Volunteer_Form_VolunteerSignUp') {
     if ($contactID = $form->getVar('_primary_volunteer_id')) {
