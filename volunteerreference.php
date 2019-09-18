@@ -38,6 +38,11 @@ function volunteerreference_civicrm_preProcess($formName, &$form) {
 function volunteerreference_civicrm_postProcess($formName, &$form) {
   if ($formName == 'CRM_Volunteer_Form_VolunteerSignUp') {
     if ($contactID = $form->getVar('_primary_volunteer_id')) {
+      $profileIDs = $form->getVar('_primary_volunteer_profile_ids');
+      if (in_array(28, $profileIDs)) {
+        CRM_Utils_System::redirect('https://girlsinscience.ca/thankyou-current-volunteer');
+      }
+
       $values = $form->controller->exportValues();
 
       $refEmail1 = $values[REF_EMAIL1];
