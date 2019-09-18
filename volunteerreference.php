@@ -40,7 +40,8 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
     if ($contactID = $form->getVar('_primary_volunteer_id')) {
       $profileIDs = $form->getVar('_primary_volunteer_profile_ids');
       if (in_array(28, $profileIDs)) {
-        E::createWPUser($contactID);
+        civicrm_api3('Contact', 'create', ['id' => $contactID, 'custom_71' => 2]);
+        E::createWPUser($contactID, TRUE);
         CRM_Utils_System::redirect('https://girlsinscience.ca/thankyou-current-volunteer');
       }
 
