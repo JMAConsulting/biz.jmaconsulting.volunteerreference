@@ -43,6 +43,7 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
         civicrm_api3('Contact', 'create', ['id' => $contactID, 'custom_71' => 2]);
         E::createWPUser($contactID, TRUE);
         CRM_Utils_System::redirect('https://girlsinscience.ca/thankyou-current-volunteer');
+        return;
       }
 
       $values = $form->controller->exportValues();
@@ -95,6 +96,13 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
 
       CRM_Utils_System::redirect('https://girlsinscience.ca/thankyou-volunteer');
     }
+  }
+}
+
+function volunteerreference_civicrm_alterMailParams(&$params, $context) {
+  if ($params['groupName'] == 'msg_tpl_workflow_volunteer') {
+    $cid = $params['contactId'];
+    $params['cc'] = E::sendChapterEmail($cid);
   }
 }
 

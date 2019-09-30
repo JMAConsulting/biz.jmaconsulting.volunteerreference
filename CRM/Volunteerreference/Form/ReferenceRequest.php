@@ -64,7 +64,7 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
 
     $count = civicrm_api3('Activity', 'getcount', ['target_contact_id' => $this->_contactID, 'activity_type_id' => 57]);
     if ($count == 2) {
-      civicrm_api3('Contact', 'create', ['id' => $this->_contactID, 'custom_71' => 2]);
+      //civicrm_api3('Contact', 'create', ['id' => $this->_contactID, 'custom_71' => 2]);
       civicrm_api3('Activity', 'get', [
         'activity_type_id' => 55,
         'assignee_contact_id' => $this->_contactID,
@@ -76,7 +76,7 @@ class CRM_Volunteerreference_Form_ReferenceRequest extends CRM_Core_Form {
         ]
       ]);
     }
-    CRM_Utils_System::redirect('https://girlsinscience.ca/?p=1228&preview=true');
+    CRM_Utils_System::redirect('https://girlsinscience.ca/reference-submit/');
   }
 
   public function buildCustom($id, $name, $viewOnly = FALSE, $ignoreContact = FALSE) {

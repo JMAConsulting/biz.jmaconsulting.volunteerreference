@@ -62,6 +62,25 @@ class CRM_Volunteerreference_Utils {
     CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
   }
 
-
+  public static function sendChapterEmail($cid) {
+    // Get a list of all chapters selected.
+    $chapterList = CRM_Core_DAO::singleValueQuery("SELECT please_select_which_chapter_you__58 FROM civicrm_value_volunteer_inf_5 WHERE entity_id = %1", [1 => [$cid, 'Integer']]);
+    if (!empty($chapterList)) {
+      $chps = array_filter(explode(CRM_Core_DAO::VALUE_SEPARATOR, $chapterList));
+    }
+    if (empty($chps)) {
+      return;
+    }
+    $chapters = CRM_Core_OptionGroup::values('cagis_chapter');
+    foreach ($chps as $chapter) {
+      $orgName = $chapters[$chapter];
+      if (!empty($orgName)) {
+        $org = CRM_Core_DAO::singleValueQuery("SELECT e.email FROM civicrm_contact c INNER JOIN civicrm_email e ON e.contact_id = c.id
+          WHERE e.is_primary = 1 AND c.is_deleted <> 1 AND organization_name = '{$orgName}'");
+        $ccEmails[] = $org;
+      }
+    }
+    return implode(',', $ccEmails);
+  } 
 
 }
