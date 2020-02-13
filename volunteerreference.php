@@ -23,7 +23,7 @@ function volunteerreference_civicrm_pageRun(&$page) {
         foreach ($custom as $cusotmGroupId => $customDetails) {
           if ($cusotmGroupId === 45) {
             foreach ($customDetails['fields'] as $fieldId => $customField) {
-              if (!empty($customField['field_value']) && in_array($fieldId, [str_replace('custom_', '', REF_EMAIL1), str_replace('custom_', '', REF_EMAIL2), str_replace('custom_', '', REF_EMAIL2)])) {
+              if (!empty($customField['field_value']) && in_array($fieldId, [str_replace('custom_', '', REF_EMAIL1), str_replace('custom_', '', REF_EMAIL2), str_replace('custom_', '', REF_EMAIL3)])) {
                 $fieldValue = $customField['field_value'];
                 $url = 'civicrm/resend/reference';
                 $url_params = 'reset=1&cid=' . $page->get_template_vars('contactId');
@@ -33,8 +33,8 @@ function volunteerreference_civicrm_pageRun(&$page) {
                 if ($fieldId == str_replace('custom_', '', REF_EMAIL2)) {
                   $url_params .= '&ref=2';
                 }
-                if ($fieldId == str_replace('custom_', '', REF_EMAIL2)) {
-                  $url_parms .= '&ref=3';
+                if ($fieldId == str_replace('custom_', '', REF_EMAIL3)) {
+                  $url_params .= '&ref=3';
                 }
                 $fieldValue .= ' <a href="' . CRM_Utils_System::url($url, $url_params) . '" class="button" style="float:right;">Resend Reference Request</a>';
                 $customData[$recordId][$cusotmGroupId]['fields'][$fieldId]['field_value'] = $fieldValue;
