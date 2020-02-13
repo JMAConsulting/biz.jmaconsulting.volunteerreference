@@ -14,9 +14,43 @@ function volunteerreference_civicrm_config(&$config) {
   _volunteerreference_civix_civicrm_config($config);
 }
 
+function volunteerreference_civicrm_pageRun(&$page) {
+  $pageName = $page->getVar('_name');
+  if ($pageName == 'CRM_Contact_Page_View_Summary') {
+    $customData = $page->get_template_vars('viewCustomData');
+    foreach ($customData as $recordId => $custom) {
+      if (!empty($recordId)) {
+        foreach ($custom as $cusotmGroupId => $customDetails) {
+          if ($cusotmGroupId === 45) {
+            foreach ($customDetails['fields'] as $fieldId => $customField) {
+              if (!empty($customField['field_value']) && in_array($fieldId, [str_replace('custom_', '', REF_EMAIL1), str_replace('custom_', '', REF_EMAIL2), str_replace('custom_', '', REF_EMAIL2)])) {
+                $fieldValue = $customField['field_value'];
+                $url = 'civicrm/resend/reference';
+                $url_params = 'reset=1&cid=' . $page->get_template_vars('contactId');
+                if ($fieldId == str_replace('custom_', '', REF_EMAIL1)) {
+                  $url_params .= '&ref=1';
+                }
+                if ($fieldId == str_replace('custom_', '', REF_EMAIL2)) {
+                  $url_params .= '&ref=2';
+                }
+                if ($fieldId == str_replace('custom_', '', REF_EMAIL2)) {
+                  $url_parms .= '&ref=3';
+                }
+                $fieldValue .= ' <a href="' . CRM_Utils_System::url($url, $url_params) . '" class="button" style="float:right;">Resend Reference Request</a>';
+                $customData[$recordId][$cusotmGroupId]['fields'][$fieldId]['field_value'] = $fieldValue;
+              }
+            }
+          }
+        }
+      }
+      $page->assign('viewCustomData', $customData);
+    }
+  }
+}
+
 function volunteerreference_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   if ($formName == 'CRM_Volunteer_Form_VolunteerSignUp') {
-    foreach ([REF_EMAIL1, REF_EMAIL2] as $key) {
+    foreach ([REF_EMAIL1, REF_EMAIL2, REF_EMAIL3] as $key) {
       if (!empty($fields[$key]) && !CRM_Utils_Rule::email($fields[$key])) {
         $errors[$key] = ts('Please enter a valid email.');
       }
@@ -52,6 +86,8 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
       $refName1 = $values[REF_NAME1];
       $refEmail2 = $values[REF_EMAIL2];
       $refName2 = $values[REF_NAME2];
+      $refEmail3 = $values[REF_NAME3];
+      $refName3 = $values[REF_NAME3];
 
       list($displayName, $email) = CRM_Contact_BAO_Contact_Location::getEmailDetails($contactID);
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
@@ -88,6 +124,16 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
           'volunteer_cid' => $contactID,
         ];
         $sendTemplateParams['tplParams']['volunteer']['url'] = CRM_Utils_System::url('civicrm/reference/request', sprintf("vid=%d&customid=%s", $params['volunteer_cid'], str_replace('custom_', '', REF_NAME2)), TRUE, NULL, TRUE);
+        E::sendMail($params, $sendTemplateParams);
+      }
+
+      if (!empty($refName3) && !empty($refEmail3)) {
+        $params = [
+          'ref_email' => $refEmail3,
+          'ref_name' => $refName3,
+          'volunteer_cid' => $contactID,
+        ];
+        $sendTemplateParams['tplParams']['volunteer']['url'] = CRM_Utils_System::url('civicrm/reference/request', sprintf("vid=%d&customid=%s", $params['volunteer_cid'], str_replace('custom_', '', REF_NAME3)));
         E::sendMail($params, $sendTemplateParams);
       }
 
