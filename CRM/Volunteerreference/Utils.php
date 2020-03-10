@@ -32,7 +32,7 @@ class CRM_Volunteerreference_Utils {
     $email = $user->user_email;
     $adt_rp_key = get_password_reset_key( $user );
     $user_login = $user->user_login;
-    $rp_link = '<a href="' . wp_login_url()."/resetpass/?key=$adt_rp_key&login=" . rawurlencode($user_login) . '">' . wp_login_url()."/resetpass/?key=$adt_rp_key&login=" . rawurlencode($user_login) . '</a>';
+    $rp_link = '<a href="' . wp_login_url()."?action=resetpass&key=$adt_rp_key&login=" . rawurlencode($user_login) . '">' . wp_login_url()."?action=resetpass&key=$adt_rp_key&login=" . rawurlencode($user_login) . '</a>';
 
     $message = "Hi ".$firstname.",<br>";
     $message .= "An account has been created on ".get_bloginfo( 'name' )." for email address ".$email."<br>";
@@ -44,7 +44,7 @@ class CRM_Volunteerreference_Utils {
     $headers = array();
 
     add_filter( 'wp_mail_content_type', function( $content_type ) {return 'text/html';});
-    $headers[] = 'From: Your company name <cagis@uwo.ca>'."\r\n";
+    $headers[] = 'From: Canadian Association for Girls in Science <info@girlsinscience.ca>'."\r\n";
     wp_mail( $email, $subject, $message, $headers);
 
     // Reset content-type to avoid conflicts -- http://core.trac.wordpress.org/ticket/23578
