@@ -133,7 +133,7 @@ function volunteerreference_civicrm_postProcess($formName, &$form) {
           'ref_name' => $refName3,
           'volunteer_cid' => $contactID,
         ];
-        $sendTemplateParams['tplParams']['volunteer']['url'] = CRM_Utils_System::url('civicrm/reference/request', sprintf("vid=%d&customid=%s", $params['volunteer_cid'], str_replace('custom_', '', REF_NAME3)));
+        $sendTemplateParams['tplParams']['volunteer']['url'] = CRM_Utils_System::url('civicrm/reference/request', sprintf("vid=%d&customid=%s", $params['volunteer_cid'], str_replace('custom_', '', REF_NAME3)), TRUE, NULL, TRUE);
         E::sendMail($params, $sendTemplateParams);
       }
 
