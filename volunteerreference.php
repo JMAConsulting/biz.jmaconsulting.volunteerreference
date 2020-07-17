@@ -16,7 +16,7 @@ function volunteerreference_civicrm_config(&$config) {
 
 function volunteerreference_civicrm_pageRun(&$page) {
   $pageName = $page->getVar('_name');
-  if ($pageName == 'CRM_Contact_Page_View_Summary') {
+  if ($pageName == 'CRM_Contact_Page_View_Summary' || $pageName === 'CRM_Contact_Page_Inline_CustomData') {
     $customData = $page->get_template_vars('viewCustomData');
     foreach ($customData as $cusotmGroupId => $custom) {
       if ($cusotmGroupId === 5) {
@@ -44,6 +44,7 @@ function volunteerreference_civicrm_pageRun(&$page) {
         }
       }
       $page->assign('viewCustomData', $customData);
+      $page->assign('cd_edit', reset($customData[5]));
     }
   }
 }
